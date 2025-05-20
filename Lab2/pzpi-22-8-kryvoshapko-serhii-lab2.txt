@@ -1,0 +1,625 @@
+МІНІСТЕРСТВО ОСВІТИ І НАУКИ УКРАЇНИ
+ХАРКІВСЬКИЙ НАЦІОНАЛЬНИЙ УНІВЕРСИТЕТ РАДІОЕЛЕКТРОНІКИ
+
+Кафедра «Програмної інженерії»
+
+
+
+ЗВІТ
+З лабораторної роботи № 2
+з дисципліни
+«Архітектура програмного забезпечення» 
+на тему «Розширення серверної частини програмної системи»
+
+
+
+Виконав
+ст. гр. ПЗПІ-22-8
+Кривошапко Сергій	Перевірив
+ст. викладач каф. ПІ
+Сокорчук І. П.
+
+
+
+
+
+
+
+
+
+
+
+
+Харків 2025
+ 
+1 ІСТОРІЯ ЗМІН
+
+У цьому розділі представлено історію внесених змін до звіту, що наведено у табл. 1.
+№	Дата	Версія звіту	Опис змін та виправлень
+1	15.05.2025	0.1	Створено розділ «Завдання»
+2	15.05.2025	0.1	Створено розділ «Опис Виконаної роботи»
+3	15.05.2025	0.1	Створено розділ «Висновки»
+
+ 
+2 ЗАВДАННЯ
+
+
+Мета лабораторної роботи — розширення серверної частини існуючої програмної системи «NutriTrack» для оптимізації процесу ведення харчового щоденника, контролю фізичної активності та підтримки користувачів у досягненні їхніх цілей здоров’я.
+Розширити фунціонал бази даних для серверної частини програмної системи та прикладного програмного інтерфейсу для програмного продукту NutriTrack. Було розширено математичні формули вони стали більш комплексними та обширними. Додається розширений та більш точний функціонал для розрахунку калорій та макронутрієнтів для користувача на основі його даних. Також додані фунції резервного копіювання бази даних для безпечної роботи.
+
+
+ 
+3 ОПИС ВИКОНАНОЇ РОБОТИ
+
+
+3.1 Покращення математичних формул для розрахунку необхідних калорій 
+
+Для точного визначення щоденної норми калорій і макронутрієнтів (білків, жирів, вуглеводів), використовується покроковий алгоритм, який базується на сучасних науково обґрунтованих формулах і враховує індивідуальні параметри користувача.
+
+1. Обчислення віку
+На основі року народження обчислюється вік користувача як різниця між поточним роком та роком народження.
+
+2. Базова швидкість обміну речовин (BMR)
+Для розрахунку базової кількості калорій, які організм витрачає у стані спокою, застосовується формула Mifflin-St Jeor:
+-	Для чоловіків:
+BMR = 10 × вага (кг) + 6.25 × зріст (см) − 5 × вік + 5
+- Для жінок:
+     BMR = 10 × вага (кг) + 6.25 × зріст (см) − 5 × вік – 161
+
+3. Загальні енергетичні витрати (TDEE)
+Рівень фізичної активності впливає на добові енергетичні витрати. BMR множиться на коефіцієнт, залежно від активності:
+-	Малорухливий спосіб життя – × 1.2;
+-	Легка активність – × 1.37;
+-	Помірна активність – × 1.42;
+-    Висока активність – × 1.62.
+
+4. Цільове коригування калорій
+Визначається різниця у вазі між поточною та цільовою масою тіла. На основі цього розраховується загальна кількість калорій, необхідна для досягнення мети (1 кг ≈ 7700 ккал):
+-	загальні ккал = різниця ваги × 7700;
+-	тижнева потреба = загальні ккал / тривалість у тижнях;
+-	добова потреба = тижнева потреба / 7.
+Безпекове обмеження: Якщо добова зміна калорій перевищує 2000 ккал, виводиться попередження, що рекомендовано збільшити тривалість для безпечного темпу змін.
+
+5. Фінальний розрахунок щоденної калорійності
+Залежно від цілі:
+-	Для схуднення – віднімається добова потреба з TDEE (але не нижче 1500 ккал для чоловіків і 1200 ккал для жінок);
+-	Для набору ваги – додається добова потреба;
+-   Для підтримання – використовується TDEE без змін.
+
+6. Розрахунок макронутрієнтів
+Макронутрієнти (білки, жири, вуглеводи) розраховуються на основі середньої ваги між поточною та цільовою і залежно від цілі:
+-	Білки: множаться на коефіцієнт (від 1.4 до 1.9 г/кг), з додатковим збільшенням, якщо;
+-	зміна ваги більше 20 кг;
+-	тривалість менше 10 тижнів.
+
+Якщо результат перевищує 3 г/кг – виводиться попередження про надмірне споживання білка.
+-	Жири: розраховуються як частка добових калорій (20–30%) і діляться на 9 (оскільки 1 г жиру = 9 ккал);
+-    Вуглеводи: залишкові калорії після білків і жирів йдуть на вуглеводи, які діляться на 4 (1 г вуглеводів = 4 ккал).
+
+Ці формули забезпечують гнучкий і реалістичний підхід до харчування на основі особистих цілей користувача (схуднення, набір або підтримка ваги), віку, статі, рівня активності та тривалості змін.
+
+
+3.2 Створення можливості резервного копіювання бази даних для забезпечення безпеки даних
+
+
+З метою забезпечення збереження та відновлення критично важливої інформації, у системі було реалізовано резервне копіювання користувацьких даних бази даних Microsoft SQL Server. Дана функція дозволяє створювати резервні копії бази у вигляді .bak файлів, що у разі збоїв або втрати даних, дозволяє швидко відновити інформацію до попереднього стану.
+Функціонал бекапу реалізовано у вигляді HTTP POST-запиту у середовищі ASP.NET Core Web API. Для роботи з базою даних використовувався SQL-провайдер.
+
+Алгоритм дії:
+-	Встановлюється з'єднання з базою даних через підключення з конфігураційного файлу.
+-	Формується динамічна SQL-команда BACKUP DATABASE, яка вивантажує резервну копію у вказану директорію на сервері.
+-	Генерується унікальна назва файлу з поточною датою та часом (NutriTrack_20250520_121145.bak).
+-	Результат виконання відображається користувачу у вигляді повідомлення про успішне створення бекапу або з описом помилки.
+
+
+ 
+4	ВИСНОВКИ	
+
+У результаті виконання лабораторної роботи було успішно реалізовано розширення серверної частини програмної системи NutriTrack, спрямоване на підвищення її точності, надійності та безпеки.
+Була вдосконалена математична модель розрахунку добової потреби в калоріях і макронутрієнтах. Реалізований алгоритм враховує ключові фізіологічні параметри користувача (вік, стать, зріст, вага, рівень активності) та індивідуальні цілі, що забезпечує персоналізований підхід до харчування.
+Додано автоматичну систему перевірки безпеки розрахунків, що робить використання системи більш надійним і обґрунтованим з точки зору здоров’я користувача.
+Реалізована можливість резервного копіювання бази даних, яка дозволяє створювати .bak файли з актуальним станом бази. Це критично важлива функція, що гарантує захист даних у випадку збоїв, втрати чи пошкодження основної бази, та забезпечує стабільну роботу системи.
+В результаті, система NutriTrack стала більш функціональною, стійкою до збоїв і орієнтованою на безпечну взаємодію з даними користувачів. 
+
+
+
+
+
+
+
+
+
+ДОДАТОК А
+
+Посилання на відеозапис доповіді та текст хронологічного опису
+
+Відеозапис презентації результатів лабораторної роботи: https://youtu.be/lMuLnsJot6g
+
+
+00:00 Вступ 
+00:46 Опис виконаної роботи 
+04:17 Створення можливостей резервного копіювання  
+05:28 Висновки 
+06:05 Демонстрація функціоналу 
+06:55 Графічні матеріали
+ 
+ДОДАТОК Б
+Графічні матеріали
+
+
+Рисунок Б.1 – ER-модель даних
+
+
+
+Рисунок Б.2 — Структура бази даних
+
+
+ 
+Рисунок Б.3 – UML-діаграма прецедентів
+
+ 
+Рисунок Б.4 – UML діаграма розгортання
+ 
+ДОДАТОК В
+Програмний код
+
+В.1 Математична обробка прикладних даних
+
+GitHub репозиторій: https://github.com/NureKryvoshapkoSerhii/apz-pzpi-22-8-kryvoshapko-serhii/blob/main/Lab2/pzpi-22-8-kryvoshapko-serhii-lab2/Controllers/GoalController.cs
+
+1. private (double calories, double protein, double carbs, double fats, string warning) CalculateNutrition(
+2.             double currentWeight,
+3.             double targetWeight,
+4.             int durationWeeks,
+5.             int height,
+6.             string gender,
+7.             GoalType goalType,
+8.             ActivityLevel activityLevel,
+9.             int birthYear)
+10.         {
+11.             const double CaloriesPerKg = 7700; 
+12.             string warning = null;
+13. 
+14.             // Calculate age
+15.             int currentYear = DateTime.UtcNow.Year;
+16.             int age = currentYear - birthYear;
+17. 
+18.             // Calculate BMR using Mifflin-St Jeor formula
+19.             double bmr;
+20.             if (gender.ToLower() == "male")
+21.             {
+22.                 bmr = (10 * currentWeight) + (6.25 * height) - (5 * age) + 5;
+23.             }
+24.             else
+25.             {
+26.                 bmr = (10 * currentWeight) + (6.25 * height) - (5 * age) - 161;
+27.             }
+28. 
+29.             // Calculate TDEE based on activity level
+30.             double tdee = bmr;
+31.             switch (activityLevel)
+32.             {
+33.                 case ActivityLevel.Sedentary:
+34.                     tdee *= 1.2;
+35.                     break;
+36.                 case ActivityLevel.Light:
+37.                     tdee *= 1.37;
+38.                     break;
+39.                 case ActivityLevel.Moderate:
+40.                     tdee *= 1.42;
+41.                     break;
+42.                 case ActivityLevel.High:
+43.                     tdee *= 1.62;
+44.                     break;
+45.             }
+46. 
+47.             // Calculate weight difference and required calorie adjustment
+48.             double weightDifference = targetWeight - currentWeight; 
+49.             double totalCaloriesNeeded = Math.Abs(weightDifference) * CaloriesPerKg; 
+50.             double weeklyCalorieAdjustment = totalCaloriesNeeded / durationWeeks; 
+51.             double dailyCalorieAdjustment = weeklyCalorieAdjustment / 7; 
+52. 
+53.             if (dailyCalorieAdjustment > 2000)
+54.             {
+55.                 warning = $"Warning: Daily calorie adjustment ({dailyCalorieAdjustment:F2} kcal) is highly unrealistic. Consider increasing duration to at least {Math.Ceiling(Math.Abs(weightDifference) / 0.5)} weeks for safer weight change.";
+56.             }
+57. 
+58.             double dailyCalories = tdee;
+59.             if (goalType == GoalType.Loss)
+60.             {
+61.                 dailyCalories -= dailyCalorieAdjustment;
+62.                 dailyCalories = Math.Max(dailyCalories, gender.ToLower() == "male" ? 1500 : 1200);
+63.             }
+64.             else if (goalType == GoalType.Gain)
+65.             {
+66.                 dailyCalories += dailyCalorieAdjustment;
+67.             }
+68.     
+69.             double proteinPerKg;
+70.             double fatPercentage;
+71.             double carbPercentage;
+72.             switch (goalType)
+73.             {
+74.                 case GoalType.Loss:
+75.                     proteinPerKg = 1.8;
+76.                     fatPercentage = 0.20; 
+77.                     carbPercentage = 0.40; 
+78.                     break;
+79.                 case GoalType.Gain:
+80.                     proteinPerKg = 1.9; 
+81.                     fatPercentage = 0.25; 
+82.                     carbPercentage = 0.45; 
+83.                     break;
+84.                 case GoalType.Maintain:
+85.                 default:
+86.                     proteinPerKg = 1.4; 
+87.                     fatPercentage = 0.30;
+88.                     carbPercentage = 0.40; 
+89.                     break;
+90.             }
+91. 
+92.             // Adjust proteinPerKg based on weight difference and duration
+93.             double averageWeight = (currentWeight + targetWeight) / 2;
+94.             if (Math.Abs(weightDifference) > 20)
+95.             {
+96.                 proteinPerKg += 0.3; 
+97.             }
+98.             if (durationWeeks < 10)
+99.             {
+100.                 proteinPerKg += 0.1; 
+101.             }
+102. 
+103.             // Calculate protein based on average weight
+104.             double protein = averageWeight * proteinPerKg;
+105. 
+106.             // Warn if protein intake is extremely high
+107.             if (protein / averageWeight > 3)
+108.             {
+109.                 warning = (string.IsNullOrEmpty(warning) ? "" : warning + " ") +
+110.                          $"Warning: Protein intake ({protein:F2} g, {protein / averageWeight:F2} g/kg) is extremely high and may not be sustainable.";
+111.             }
+112. 
+113.             // Calculate fats and carbs
+114.             double fats = (dailyCalories * fatPercentage) / 9;
+115.             double proteinCalories = protein * 4;
+116.             double fatCalories = fats * 9;
+117.             double carbCalories = dailyCalories * carbPercentage;
+118.             double carbs = carbCalories / 4;
+119. 
+120.             // Ensure non-negative macronutrients
+121.             protein = Math.Max(protein, 0);
+122.             fats = Math.Max(fats, 0);
+123.             carbs = Math.Max(carbs, 0);
+124. 
+125.             return (dailyCalories, protein, carbs, fats, warning);
+126.         }
+
+
+
+В.2 Адміністрування бізнес-логіки системи
+
+GitHub репозиторій: https://github.com/NureKryvoshapkoSerhii/apz-pzpi-22-8-kryvoshapko-serhii/blob/main/Lab2/pzpi-22-8-kryvoshapko-serhii-lab2/Controllers/AdminController.cs
+
+1.  public class AdminController : ControllerBase
+2.     {
+3.         private readonly ApplicationDbContext _context;
+4. 
+5.         public AdminController(ApplicationDbContext context)
+6.         {
+7.             _context = context;
+8.         }
+9. 
+10.         [HttpDelete("remove-user/{userUid}")]
+11.         public async Task<IActionResult> RemoveUser(string userUid)
+12.         {
+13.             using var transaction = await _context.Database.BeginTransactionAsync();
+14.             try
+15.             {
+16.                 await _context.WeightMeasurements
+17.                     .Where(w => w.user_uid == userUid)
+18.                     .ExecuteDeleteAsync();
+19. 
+20.                 await _context.MealEntries
+21.                     .Where(m => m.user_uid == userUid)
+22.                     .ExecuteDeleteAsync();
+23. 
+24.                 await _context.ExerciseEntries
+25.                     .Where(e => e.user_uid == userUid)
+26.                     .ExecuteDeleteAsync();
+27. 
+28.                 await _context.WaterIntakes
+29.                     .Where(w => w.user_uid == userUid)
+30.                     .ExecuteDeleteAsync();
+31. 
+32.                 await _context.StreakHistories
+33.                     .Where(s => s.user_uid == userUid)
+34.                     .ExecuteDeleteAsync();
+35. 
+36.                 await _context.ConsultantNotes
+37.                     .Where(cn => cn.user_uid == userUid)
+38.                     .ExecuteDeleteAsync();
+39. 
+40.                 await _context.ConsultantRequests
+41.                     .Where(cr => cr.user_uid == userUid)
+42.                     .ExecuteDeleteAsync();
+43. 
+44.                 await _context.UserConsultants
+45.                     .Where(uc => uc.user_uid == userUid)
+46.                     .ExecuteDeleteAsync();
+47. 
+48.                 await _context.UserGoals
+49.                     .Where(ug => ug.user_uid == userUid)
+50.                     .ExecuteDeleteAsync();
+51. 
+52.                 await _context.Users
+53.                     .Where(u => u.user_uid == userUid)
+54.                     .ExecuteDeleteAsync();
+55. 
+56.                 await transaction.CommitAsync();
+57.                 return Ok(new { message = "User and all related data removed successfully." });
+58.             }
+59.             catch (Exception ex)
+60.             {
+61.                 await transaction.RollbackAsync();
+62.                 return StatusCode(500, new { message = "Error removing user data.", error = ex.Message });
+63.             }
+64.         }
+65.         [HttpGet("get-all-admins")]
+66.         public async Task<IActionResult> GetAllAdmins()
+67.         {
+68.             try
+69.             {
+70.                 var admins = await _context.Admins
+71.                     .Select(a => new
+72.                     {
+73.                         a.admin_uid,
+74.                         a.registration_date,
+75.                         a.name,
+76.                         a.email,
+77.                         a.phone_number
+78.                     })
+79.                     .ToListAsync();
+80. 
+81.                 if (admins == null || !admins.Any())
+82.                 {
+83.                     return NotFound(new { message = "No admin users found." });
+84.                 }
+85. 
+86.                 return Ok(admins);
+87.             }
+88.             catch (Exception ex)
+89.             {
+90.                 return StatusCode(500, new { message = "Error retrieving admin data.", error = ex.Message });
+91.             }
+92.         }
+93.         [HttpDelete("remove-consultant/{consultantUid}")]
+94.         public async Task<IActionResult> RemoveConsultant(string consultantUid)
+95.         {
+96.             using var transaction = await _context.Database.BeginTransactionAsync();
+97.             try
+98.             {
+99.                 await _context.ConsultantNotes
+100.                     .Where(cn => cn.consultant_uid == consultantUid)
+101.                     .ExecuteDeleteAsync();
+102. 
+103.                 await _context.ConsultantRequests
+104.                     .Where(cr => cr.consultant_uid == consultantUid)
+105.                     .ExecuteDeleteAsync();
+106. 
+107.                 await _context.UserConsultants
+108.                     .Where(uc => uc.consultant_uid == consultantUid)
+109.                     .ExecuteDeleteAsync();
+110. 
+111.                 await _context.UserGoals
+112.                     .Where(ug => ug.consultant_uid == consultantUid)
+113.                     .ExecuteUpdateAsync(s => s
+114.                         .SetProperty(b => b.consultant_uid, (string)null)
+115.                         .SetProperty(b => b.is_approved_by_consultant, false));
+116. 
+117.                 await _context.Consultants
+118.                     .Where(c => c.consultant_uid == consultantUid)
+119.                     .ExecuteDeleteAsync();
+120. 
+121.                 await transaction.CommitAsync();
+122.                 return Ok(new { message = "Consultant and all related data removed successfully." });
+123.             }
+124.             catch (Exception ex)
+125.             {
+126.                 await transaction.RollbackAsync();
+127.                 return StatusCode(500, new { message = "Error removing consultant data.", error = ex.Message });
+128.             }
+129.         }
+130. 
+131. 
+132.         [HttpGet("get-user-info")]
+133.         public async Task<IActionResult> GetUserInfo([FromQuery] string nickname, [FromQuery] DateTime createdAt, [FromQuery] DateTime lastLogin)
+134.         {
+135.             var user = await _context.Users
+136.                 .Where(u => u.nickname == nickname
+137.                     && EF.Functions.DateDiffDay(u.created_at, createdAt) == 0
+138.                     && EF.Functions.DateDiffDay(u.last_login, lastLogin) == 0)
+139.                 .Select(u => new
+140.                 {
+141.                     u.user_uid,
+142.                     u.nickname,
+143.                     u.created_at,
+144.                     u.last_login,
+145.                     u.gender,
+146.                     u.height,
+147.                     u.current_weight
+148.                 })
+149.                 .FirstOrDefaultAsync();
+150. 
+151.             if (user == null)
+152.             {
+153.                 return NotFound(new { message = "User not found." });
+154.             }
+155. 
+156.             return Ok(user);
+157.         }
+158. 
+159.         [HttpGet("get-consultant-info")]
+160.         public async Task<IActionResult> GetConsultantInfo([FromQuery] string nickname, [FromQuery] DateTime createdAt, [FromQuery] DateTime lastLogin)
+161.         {
+162.             var consultant = await _context.Consultants
+163.                 .Where(c => c.nickname == nickname
+164.                     && EF.Functions.DateDiffDay(c.created_at, createdAt) == 0
+165.                     && EF.Functions.DateDiffDay(c.last_login, lastLogin) == 0)
+166.                 .Select(c => new
+167.                 {
+168.                     c.consultant_uid,
+169.                     c.nickname,
+170.                     c.created_at,
+171.                     c.last_login,
+172.                     c.current_clients,
+173.                     c.max_clients,
+174.                     c.experience_years
+175.                 })
+176.                 .FirstOrDefaultAsync();
+177. 
+178.             if (consultant == null)
+179.             {
+180.                 return NotFound(new { message = "Consultant not found." });
+181.             }
+182. 
+183.             return Ok(consultant);
+184.         }
+185. 
+186.         [HttpGet("get-statistics")]
+187.         public async Task<IActionResult> GetStatistics()
+188.         {
+189.             var userCount = await _context.Users.CountAsync();
+190.             var activeUserCount = await _context.Users.CountAsync(u => u.is_active);
+191. 
+192.             var consultantCount = await _context.Consultants.CountAsync();
+193.             var activeConsultantCount = await _context.Consultants.CountAsync(c => c.is_active);
+194. 
+195.             var statistics = new
+196.             {
+197.                 TotalUsers = userCount,
+198.                 ActiveUsers = activeUserCount,
+199.                 TotalConsultants = consultantCount,
+200.                 ActiveConsultants = activeConsultantCount
+201.             };
+202. 
+203.             return Ok(statistics);
+204.         }
+205. 
+206.         [HttpPatch("update-user-profile/{user_uid}")]
+207.         public async Task<IActionResult> UpdateUserProfile(string user_uid, [FromBody] UpdateProfileDto updateDto)
+208.         {
+209.             var user = await _context.Users.FindAsync(user_uid);
+210.             if (user == null)
+211.             {
+212.                 return NotFound(new { message = "Користувача не знайдено" });
+213.             }
+214. 
+215.             if (updateDto.Nickname != null)
+216.             {
+217.                 user.nickname = updateDto.Nickname;
+218.             }
+219.             if (updateDto.ProfilePicture != null)
+220.             {
+221.                 user.profile_picture = updateDto.ProfilePicture;
+222.             }
+223.             if (updateDto.ProfileDescription != null)
+224.             {
+225.                 user.profile_description = updateDto.ProfileDescription;
+226.             }
+227. 
+228.             await _context.SaveChangesAsync();
+229.             return Ok(new { message = "Профіль користувача успішно оновлено" });
+230.         }
+231. 
+232.         [HttpPatch("update-consultant-profile/{consultant_uid}")]
+233.         public async Task<IActionResult> UpdateConsultantProfile(string consultant_uid, [FromBody] UpdateConsultantProfileDto updateDto)
+234.         {
+235.             var consultant = await _context.Consultants.FindAsync(consultant_uid);
+236.             if (consultant == null)
+237.             {
+238.                 return NotFound(new { message = "Консультанта не знайдено" });
+239.             }
+240. 
+241.             if (updateDto.Nickname != null)
+242.             {
+243.                 consultant.nickname = updateDto.Nickname;
+244.             }
+245.             if (updateDto.ProfilePicture != null)
+246.             {
+247.                 consultant.profile_picture = updateDto.ProfilePicture;
+248.             }
+249.             if (updateDto.ProfileDescription != null)
+250.             {
+251.                 consultant.profile_description = updateDto.ProfileDescription;
+252.             }
+253.             if (updateDto.ExperienceYears != null)
+254.             {
+255.                 consultant.experience_years = updateDto.ExperienceYears.Value;
+256.             }
+257. 
+258.             await _context.SaveChangesAsync();
+259.             return Ok(new { message = "Профіль консультанта успішно оновлено" });
+260.         }
+261.     }
+262. }
+263. public class UpdateProfileDto
+264. {
+265.     public string? Nickname { get; set; }
+266.     public string? ProfilePicture { get; set; }
+267.     public string? ProfileDescription { get; set; }
+268. }
+269. 
+270. public class UpdateConsultantProfileDto : UpdateProfileDto
+271. {
+272.     public int? ExperienceYears { get; set; }
+273. }
+
+
+B.3 Резервне копіювання користувацьких даних
+
+GitHub репозиторій: https://github.com/NureKryvoshapkoSerhii/apz-pzpi-22-8-kryvoshapko-serhii/blob/main/Lab2/pzpi-22-8-kryvoshapko-serhii-lab2/Controllers/DatabaseController.cs
+
+
+1. [ApiController]
+2. [Route("api/[controller]")]
+3. public class DatabaseController : ControllerBase
+4. {
+5.     private readonly IConfiguration _configuration;
+6. 
+7.     public DatabaseController(IConfiguration configuration)
+8.     {
+9.         _configuration = configuration;
+10.     }
+11. 
+12.     [HttpPost("backup")]
+13.     public async Task<IActionResult> BackupDatabase()
+14.     {
+15.         string dbName = "NutriTrack";
+16.         string folderPath = @"C:\DatabaseBackups";
+17.         string fileName = $"{dbName}_{DateTime.Now:yyyyMMdd_HHmmss}.bak";
+18.         string backupPath = System.IO.Path.Combine(folderPath, fileName);
+19. 
+20.         string connectionString = _configuration.GetConnectionString("DefaultConnection");
+21. 
+22.         string sql = $@"
+23.             BACKUP DATABASE [{dbName}]
+24.             TO DISK = N'{backupPath}'
+25.             WITH FORMAT, INIT, NAME = 'Backup of {dbName}', COMPRESSION";
+26. 
+27.         try
+28.         {
+29.             using SqlConnection connection = new SqlConnection(connectionString);
+30.             using SqlCommand command = new SqlCommand(sql, connection);
+31. 
+32.             await connection.OpenAsync();
+33.             await command.ExecuteNonQueryAsync();
+34. 
+35.             return Ok($"✅ The backup is created: {backupPath}");
+36.         }
+37.         catch (Exception ex)
+38.         {
+39.             return StatusCode(500, $"❌ Error: {ex.Message}");
+40.         }
+41.     }
+42. }
+
