@@ -1,0 +1,765 @@
+МІНІСТЕРСТВО ОСВІТИ І НАУКИ УКРАЇНИ
+ХАРКІВСЬКИЙ НАЦІОНАЛЬНИЙ УНІВЕРСИТЕТ РАДІОЕЛЕКТРОНІКИ
+
+Кафедра «Програмної інженерії»
+
+
+
+ЗВІТ
+З лабораторної роботи № 3
+з дисципліни
+«Архітектура програмного забезпечення» 
+на тему «Розробка програмної архітектури, створення та відлагодження програмного коду веб-клієнта програмної системи.»
+
+
+
+Виконав
+ст. гр. ПЗПІ-22-8
+Кривошапко Сергій	Перевірив
+ст. викладач каф. ПІ
+Сокорчук І. П.
+
+
+
+
+
+
+
+
+
+Харків 2025
+ 
+1 ІСТОРІЯ ЗМІН
+
+У цьому розділі представлено історію внесених змін до звіту, що наведено у табл. 1.
+№	Дата	Версія звіту	Опис змін та виправлень
+1	22.05.2025	0.1	Створено розділ «Завдання»
+2	22.05.2025	0.1	Створено розділ «Опис Виконаної роботи»
+3	22.05.2025	0.1	Створено розділ «Висновки»
+
+ 
+2 ЗАВДАННЯ
+
+
+Мета лабораторної роботи — розробка клієнтську /front-end частину програмої системи «NutriTrack».
+У межах реалізації клієнтської частини програмної системи NutriTrack необхідно розробити адміністративну панель, яка надає засоби управління системою та забезпечує її належне функціонування. Основними функціональними компонентами адміністративної панелі є:
+- 	Реєстрація та авторизація адміністраторів в системі;
+-	Перегляд списку користувачів  та консультантів;
+-	Пошук користувачів та консультантів за нікнеймами;
+-	Редагування даних користувача та консультанта;
+-	Видалення користувачів та консультантів;
+-	Перегляд статистики додатку;
+-	Можливість створювати резервну копію бази даних.
+
+
+
+
+
+
+3 ОПИС ВИКОНАНОЇ РОБОТИ
+
+3.1 Розробка модулів реєстрації та авторизації адміністраторів
+
+       Реалізовано модуль авторизації та реєстрації адміністраторів у NutriTrack Web Admin з використанням Firebase Authentication та Google Sign-In. Авторизація включає вхід через Google, отримання ID-токена й перевірку адміністратора через API-запит. Якщо адміністратор новий, відображається форма реєстрації. Успішна реєстрація перенаправляє на AdminMainScreen. Інтерфейс виконано в стилі проєкту. Код винесено в ДОДАТОК В.
+
+3.2 Реалізація перегляду та пошуку користувачів і консультантів
+
+       Розроблено вкладки «Consultants» і «Users» у AdminMainScreen для відображення списків, отриманих через API-запити. Картки показують нікнейм, дату створення, останній вхід, аватар. Додано пошук за нікнеймом із локальною фільтрацією в реальному часі. Інтерфейс адаптивний: для широких екранів, та для мобільних. Код винесено в ДОДАТОК В.
+
+3.3 Створення можливості резервного копіювання бази даних
+
+       Додано кнопку «Create Database Backup» у AdminMainScreen, яка викликає POST-запит до ASP.NET Web API. Запит із ID-токеном експортує дані в захищений файл. Успіх підтверджується через SnackBar, під час виконання показується CircularProgressIndicator. Код винесено в ДОДАТОК В.
+
+3.4 Реалізація редагування та видалення інформації про користувачів і консультантів
+
+        Забезпечено можливість редагування персональної інформації користувачів і консультантів через інтерактивні форми. Також реалізовано функціонал видалення облікових записів, що супроводжується підтвердженням дії з боку адміністратора. Додано кнопки редагування та видалення в картках списків. Редагування відкриває showEditDialog. Код винесено в ДОДАТОК В.
+
+3.5 Візуалізація статистики додатку
+
+        Розроблено окремий розділ адміністративної панелі для перегляду статистики. Дані отримуються з API та візуалізуються у вигляді статистики для полегшеного аналізу, код для створення фунціоналу винесено в ДОДАТОК В.
+4	ВИСНОВКИ
+
+У результаті виконаної роботи над проєктом NutriTrack Web Admin було успішно реалізовано функціональну адміністративну панель для управління системою. Розроблено модулі реєстрації та авторизації адміністраторів із використанням Firebase Authentication і Google Sign-In, що забезпечило безпечний доступ із перевіркою секретного коду. Створено зручний інтерфейс для перегляду та пошуку користувачів і консультантів із локальною фільтрацією за нікнеймами, адаптований до різних розмірів екранів. 
+Реалізовано функціонал резервного копіювання бази даних через ASP.NET Web API, а також можливості редагування та видалення інформації про користувачів і консультантів із підтвердженням дій. Окремий розділ для візуалізації статистики полегшує аналіз даних, отриманих із API.
+Проєкт виконано з дотриманням принципів безпеки (авторизація через токени, захист API) і зручності використання (адаптивний дизайн, візуальний зворотний зв’язок). Усі модулі протестовано на різних сценаріях, включаючи успішне виконання та обробку помилок, що підтверджує їхню стабільність. 
+Використання сучасних технологій (Flutter, Firebase, ASP.NET) дозволило створити гнучку та масштабовану систему. У процесі роботи створено UML-діаграми, які відображають архітектуру та логіку системи, що сприяє її подальшому розвитку та підтримці.
+
+
+
+
+
+ДОДАТОК А
+
+Посилання на відеозапис доповіді та текст хронологічного опису
+
+Відеозапис доповіді на YouTube: https://youtu.be/E_LwyP91J8M
+
+00:00 Вступ 
+00:43 Авторизація та реєстрація адміністратора 
+01:25 Демонстрація адмін панелі
+02:15 Видалення користувачів та консультантів
+03:29 Перегляд статистки по додатку
+03:47 Створення бекапу бази даних
+ 
+ДОДАТОК Б
+Графічні матеріали
+
+ 
+Рисунок Б.1 – UML-діаграма прецедентів
+
+ 
+Рисунок Б.2 — UML-діаграма компонентів
+
+
+ 
+
+Рисунок Б.3 – UML-діаграма станів
+
+ 
+Рисунок Б.4 – UML діаграма діяльності
+ 
+ДОДАТОК В
+Програмний код
+
+В.1 Функції авторизації та реєстрації адміністатора
+
+GitHub репозиторій: https://github.com/NureKryvoshapkoSerhii/apz-pzpi-22-8-kryvoshapko-serhii/blob/main/Lab3/pzpi-22-8-kryvoshapko-serhii-lab3/lib/screens/auth_screen.dart
+
+1. import 'package:flutter/material.dart';
+2. import 'package:firebase_auth/firebase_auth.dart';
+3. import 'package:http/http.dart' as http;
+4. import 'package:nutri_track_web_admin/screens/AdminMainScreen.dart';
+5. import 'dart:convert';
+6. 
+7. const Color primaryColor = Color(0xFF2F4F4F);
+8. const Color secondaryColor = Color(0xFF64A79B);
+9. const Color accentColor = Colors.blueAccent;
+10. const Color textColorLight = Colors.white;
+11. const Color textColorDark = Colors.black87;
+12. const Color cardColor = Color(0xFF2F4F4F);
+13. 
+14. const String apiBaseUrl = 'http://192.168.0.183:5182/api';
+15. 
+16. class AdminAuthScreen extends StatefulWidget {
+17.   const AdminAuthScreen({Key? key}) : super(key: key);
+18. 
+19.   @override
+20.   State<AdminAuthScreen> createState() => _AdminAuthScreenState();
+21. }
+22. 
+23. class _AdminAuthScreenState extends State<AdminAuthScreen> {
+24.   final FirebaseAuth _auth = FirebaseAuth.instance;
+25.   bool isRegistering = false;
+26.   String? _idToken;
+27.   String? _email;
+28.   final _nameController = TextEditingController();
+29.   final _phoneController = TextEditingController();
+30.   final _secretCodeController = TextEditingController();
+31.   bool _isLoading = false;
+32.   String? _errorMessage;
+33. 
+34.   static const String _adminSecretCode = '1599';
+35. 
+36.   Future<void> handleGoogleSignIn() async {
+37.     setState(() {
+38.       _isLoading = true;
+39.       _errorMessage = null;
+40.       debugPrint(
+41.         'handleGoogleSignIn: Starting Google Sign-In, _isLoading = true',
+42.       );
+43.     });
+44. 
+45.     try {
+46.       GoogleAuthProvider googleProvider = GoogleAuthProvider();
+47.       UserCredential userCredential = await _auth.signInWithPopup(
+48.         googleProvider,
+49.       );
+50.       final idToken = await userCredential.user?.getIdToken();
+51.       final email = userCredential.user?.email;
+52. 
+53.       if (idToken == null || email == null) {
+54.         throw Exception("Failed to get ID token or email");
+55.       }
+56. 
+57.       setState(() {
+58.         _idToken = idToken;
+59.         _email = email;
+60.         debugPrint('handleGoogleSignIn: Successfully signed in, email: $email');
+61.       });
+62. 
+63.       bool adminExists = await checkIfAdminExists(email);
+64.       if (adminExists) {
+65.         debugPrint(
+66.           'handleGoogleSignIn: Admin exists, navigating to AdminMainScreen',
+67.         );
+68.         Navigator.of(context).pushReplacement(
+69.           MaterialPageRoute(builder: (_) => const AdminMainScreen()),
+70.         );
+71.       } else {
+72.         setState(() {
+73.           isRegistering = true;
+74.           _isLoading = false;
+75.           debugPrint(
+76.             'handleGoogleSignIn: Admin does not exist, showing registration form, _isLoading = false',
+77.           );
+78.         });
+79.       }
+80.     } catch (e) {
+81.       setState(() {
+82.         _errorMessage = e.toString();
+83.         _isLoading = false;
+84.         debugPrint(
+85.           'handleGoogleSignIn: Error occurred: $e, _isLoading = false',
+86.         );
+87.       });
+88.     }
+89.   }
+90. 
+91.   Future<bool> checkIfAdminExists(String email) async {
+92.     try {
+93.       final response = await http.get(
+94.         Uri.parse('$apiBaseUrl/Admin/get-all-admins'),
+95.         headers: {
+96.           'Content-Type': 'application/json',
+97.           'Authorization': 'Bearer $_idToken',
+98.         },
+99.       );
+100. 
+101.       if (response.statusCode == 200) {
+102.         final List admins = jsonDecode(response.body);
+103.         final exists = admins.any((admin) => admin['email'] == email);
+104.         debugPrint('checkIfAdminExists: Admin exists for $email: $exists');
+105.         return exists;
+106.       }
+107.       debugPrint(
+108.         'checkIfAdminExists: Failed to fetch admins, status: ${response.statusCode}',
+109.       );
+110.       return false;
+111.     } catch (e) {
+112.       debugPrint('checkIfAdminExists: Error: $e');
+113.       return false;
+114.     }
+115.   }
+116. 
+117.   Future<void> registerAdmin() async {
+118.     setState(() {
+119.       _isLoading = true;
+120.       _errorMessage = null;
+121.       debugPrint('registerAdmin: Starting registration, _isLoading = true');
+122.     });
+123. 
+124.     if (_secretCodeController.text != _adminSecretCode) {
+125.       setState(() {
+126.         _errorMessage = 'Invalid secret code. Please try again.';
+127.         _isLoading = false;
+128.         debugPrint('registerAdmin: Invalid secret code, _isLoading = false');
+129.       });
+130.       return;
+131.     }
+132. 
+133.     try {
+134.       final response = await http.post(
+135.         Uri.parse('$apiBaseUrl/Auth/register/admin'),
+136.         headers: {'Content-Type': 'application/json'},
+137.         body: jsonEncode({
+138.           'idToken': _idToken,
+139.           'name': _nameController.text,
+140.           'email': _email,
+141.           'phone_number': _phoneController.text,
+142.         }),
+143.       );
+144. 
+145.       if (response.statusCode == 200) {
+146.         debugPrint('registerAdmin: Registration successful');
+147.         ScaffoldMessenger.of(context).showSnackBar(
+148.           const SnackBar(
+149.             content: Text('Registration successful!'),
+150.             backgroundColor: accentColor,
+151.           ),
+152.         );
+153.         Navigator.of(context).pushReplacement(
+154.           MaterialPageRoute(builder: (_) => const AdminMainScreen()),
+155.         );
+156.       } else {
+157.         setState(() {
+158.           _errorMessage = 'Error: ${response.body}';
+159.           _isLoading = false;
+160.           debugPrint(
+161.             'registerAdmin: Failed with status ${response.statusCode}, _isLoading = false',
+162.           );
+163.         });
+164.       }
+165.     } catch (e) {
+166.       setState(() {
+167.         _errorMessage = 'Error: $e';
+168.         _isLoading = false;
+169.         debugPrint('registerAdmin: Error: $e, _isLoading = false');
+170.       });
+171.     }
+172.   }
+173. 
+174.   @override
+175.   void dispose() {
+176.     _nameController.dispose();
+177.     _phoneController.dispose();
+178.     _secretCodeController.dispose();
+179.     super.dispose();
+180.   }
+181. 
+182.   @override
+183.   Widget build(BuildContext context) {
+184.     final size = MediaQuery.of(context).size;
+185.     debugPrint(
+186.       'build: isRegistering = $isRegistering, _isLoading = $_isLoading',
+187.     );
+188.     return Scaffold(
+189.       backgroundColor: secondaryColor.withOpacity(0.3),
+190.       body: Center(
+191.         child: Container(
+192.           width: size.width > 600 ? 400 : size.width * 0.9,
+193.           padding: const EdgeInsets.all(24),
+194.           decoration: BoxDecoration(
+195.             color: Colors.white,
+196.             borderRadius: BorderRadius.circular(12),
+197.             boxShadow: const [
+198.               BoxShadow(
+199.                 color: Colors.black12,
+200.                 blurRadius: 8,
+201.                 offset: Offset(0, 2),
+202.               ),
+203.             ],
+204.           ),
+205.           child: Column(
+206.             mainAxisSize: MainAxisSize.min,
+207.             children: [
+208.               const SizedBox(height: 16),
+209.               Icon(Icons.admin_panel_settings, size: 64, color: primaryColor),
+210.               const SizedBox(height: 16),
+211.               Text(
+212.                 isRegistering ? 'Complete Registration' : 'Admin Login',
+213.                 style: TextStyle(
+214.                   fontSize: 22,
+215.                   fontWeight: FontWeight.w600,
+216.                   color: primaryColor,
+217.                 ),
+218.               ),
+219.               const SizedBox(height: 24),
+220.               if (isRegistering) ...[
+221.                 TextField(
+222.                   controller: _nameController,
+223.                   decoration: InputDecoration(
+224.                     labelText: 'Name',
+225.                     labelStyle: TextStyle(color: primaryColor),
+226.                     prefixIcon: Icon(Icons.person_outline, color: primaryColor),
+227.                     filled: true,
+228.                     fillColor: secondaryColor.withOpacity(0.1),
+229.                     border: OutlineInputBorder(
+230.                       borderRadius: BorderRadius.circular(8),
+231.                       borderSide: BorderSide.none,
+232.                     ),
+233.                     focusedBorder: OutlineInputBorder(
+234.                       borderRadius: BorderRadius.circular(8),
+235.                       borderSide: BorderSide(color: accentColor),
+236.                     ),
+237.                   ),
+238.                   style: const TextStyle(color: textColorDark),
+239.                 ),
+240.                 const SizedBox(height: 12),
+241.                 TextField(
+242.                   controller: _phoneController,
+243.                   decoration: InputDecoration(
+244.                     labelText: 'Phone Number',
+245.                     labelStyle: TextStyle(color: primaryColor),
+246.                     prefixIcon: Icon(Icons.phone, color: primaryColor),
+247.                     filled: true,
+248.                     fillColor: secondaryColor.withOpacity(0.1),
+249.                     border: OutlineInputBorder(
+250.                       borderRadius: BorderRadius.circular(8),
+251.                       borderSide: BorderSide.none,
+252.                     ),
+253.                     focusedBorder: OutlineInputBorder(
+254.                       borderRadius: BorderRadius.circular(8),
+255.                       borderSide: BorderSide(color: accentColor),
+256.                     ),
+257.                   ),
+258.                   style: const TextStyle(color: textColorDark),
+259.                   keyboardType: TextInputType.phone,
+260.                 ),
+261.                 const SizedBox(height: 12),
+262.                 TextField(
+263.                   controller: _secretCodeController,
+264.                   decoration: InputDecoration(
+265.                     labelText: 'Secret Code',
+266.                     labelStyle: TextStyle(color: primaryColor),
+267.                     prefixIcon: Icon(Icons.lock_outline, color: primaryColor),
+268.                     filled: true,
+269.                     fillColor: secondaryColor.withOpacity(0.1),
+270.                     border: OutlineInputBorder(
+271.                       borderRadius: BorderRadius.circular(8),
+272.                       borderSide: BorderSide.none,
+273.                     ),
+274.                     focusedBorder: OutlineInputBorder(
+275.                       borderRadius: BorderRadius.circular(8),
+276.                       borderSide: BorderSide(color: accentColor),
+277.                     ),
+278.                   ),
+279.                   obscureText: true,
+280.                   style: const TextStyle(color: textColorDark),
+281.                 ),
+282.                 const SizedBox(height: 16),
+283.                 if (_errorMessage != null)
+284.                   Padding(
+285.                     padding: const EdgeInsets.only(bottom: 12),
+286.                     child: Text(
+287.                       _errorMessage!,
+288.                       style: const TextStyle(color: Colors.red),
+289.                     ),
+290.                   ),
+291.                 _isLoading
+292.                     ? CircularProgressIndicator(color: primaryColor)
+293.                     : ElevatedButton(
+294.                       onPressed: registerAdmin,
+295.                       style: ElevatedButton.styleFrom(
+296.                         backgroundColor: primaryColor,
+297.                         foregroundColor: textColorLight,
+298.                         padding: const EdgeInsets.symmetric(
+299.                           horizontal: 32,
+300.                           vertical: 12,
+301.                         ),
+302.                         shape: RoundedRectangleBorder(
+303.                           borderRadius: BorderRadius.circular(8),
+304.                         ),
+305.                         elevation: 2,
+306.                       ),
+307.                       child: const Text(
+308.                         'Register',
+309.                         style: TextStyle(fontSize: 16),
+310.                       ),
+311.                     ),
+312.               ] else ...[
+313.                 ElevatedButton.icon(
+314.                   onPressed: _isLoading ? null : handleGoogleSignIn,
+315.                   icon: const Icon(Icons.login, color: textColorLight),
+316.                   label: const Text(
+317.                     'Sign in with Google',
+318.                     style: TextStyle(color: textColorLight),
+319.                   ),
+320.                   style: ElevatedButton.styleFrom(
+321.                     backgroundColor: accentColor,
+322.                     foregroundColor: textColorLight,
+323.                     padding: const EdgeInsets.symmetric(
+324.                       horizontal: 24,
+325.                       vertical: 12,
+326.                     ),
+327.                     shape: RoundedRectangleBorder(
+328.                       borderRadius: BorderRadius.circular(8),
+329.                     ),
+330.                     elevation: 2,
+331.                   ),
+332.                 ),
+333.                 const SizedBox(height: 12),
+334.                 if (_errorMessage != null)
+335.                   Padding(
+336.                     padding: const EdgeInsets.only(bottom: 12),
+337.                     child: Text(
+338.                       _errorMessage!,
+339.                       style: const TextStyle(color: Colors.red),
+340.                     ),
+341.                   ),
+342.                 Text(
+343.                   'If you don\'t have an account — it will be created after Google sign-in.',
+344.                   style: TextStyle(
+345.                     fontSize: 12,
+346.                     color: primaryColor.withOpacity(0.7),
+347.                   ),
+348.                   textAlign: TextAlign.center,
+
+
+
+В.2 Методи для доступа до API
+
+GitHub репозиторій: https://github.com/NureKryvoshapkoSerhii/apz-pzpi-22-8-kryvoshapko-serhii/blob/main/Lab3/pzpi-22-8-kryvoshapko-serhii-lab3/lib/services.dart
+
+1. import 'dart:convert';
+2. import 'package:firebase_auth/firebase_auth.dart';
+3. import 'package:http/http.dart' as http;
+4. import 'package:flutter/material.dart';
+5. 
+6. const String apiBaseUrl = 'http://192.168.0.183:5182/api';
+7. 
+8. class AdminApiService {
+9.   Future<String?> _getAuthToken() async {
+10.     return await FirebaseAuth.instance.currentUser?.getIdToken();
+11.   }
+12. 
+13.   Future<List<dynamic>> fetchConsultants(BuildContext context) async {
+14.     try {
+15.       final token = await _getAuthToken();
+16.       final response = await http.get(
+17.         Uri.parse('$apiBaseUrl/Consultant/get-all-consultants'),
+18.         headers: {
+19.           'Authorization': 'Bearer $token',
+20.           'Content-Type': 'application/json',
+21.         },
+22.       );
+23. 
+24.       if (response.statusCode == 200) {
+25.         final data = jsonDecode(response.body);
+26.         debugPrint('Consultants: $data');
+27.         return data;
+28.       } else {
+29.         ScaffoldMessenger.of(context).showSnackBar(
+30.           SnackBar(
+31.             content: Text('Error loading consultants: ${response.statusCode}'),
+32.             backgroundColor: Colors.red,
+33.           ),
+34.         );
+35.         return [];
+36.       }
+37.     } catch (e) {
+38.       ScaffoldMessenger.of(context).showSnackBar(
+39.         SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+40.       );
+41.       return [];
+42.     }
+43.   }
+44. 
+45.   Future<List<dynamic>> fetchUsers(BuildContext context) async {
+46.     try {
+47.       final token = await _getAuthToken();
+48.       final response = await http.get(
+49.         Uri.parse('$apiBaseUrl/User/get-all-users'),
+50.         headers: {
+51.           'Authorization': 'Bearer $token',
+52.           'Content-Type': 'application/json',
+53.         },
+54.       );
+55. 
+56.       if (response.statusCode == 200) {
+57.         final data = jsonDecode(response.body);
+58.         debugPrint('Users: $data');
+59.         return data;
+60.       } else {
+61.         ScaffoldMessenger.of(context).showSnackBar(
+62.           SnackBar(
+63.             content: Text('Error loading users: ${response.statusCode}'),
+64.             backgroundColor: Colors.red,
+65.           ),
+66.         );
+67.         return [];
+68.       }
+69.     } catch (e) {
+70.       ScaffoldMessenger.of(context).showSnackBar(
+71.         SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+72.       );
+73.       return [];
+74.     }
+75.   }
+76. 
+77.   Future<Map<String, dynamic>?> fetchStatistics(BuildContext context) async {
+78.     try {
+79.       final token = await _getAuthToken();
+80.       final response = await http.get(
+81.         Uri.parse('$apiBaseUrl/Admin/get-statistics'),
+82.         headers: {
+83.           'Authorization': 'Bearer $token',
+84.           'Content-Type': 'application/json',
+85.         },
+86.       );
+87. 
+88.       if (response.statusCode == 200) {
+89.         return jsonDecode(response.body);
+90.       } else {
+91.         ScaffoldMessenger.of(context).showSnackBar(
+92.           SnackBar(
+93.             content: Text('Error loading statistics: ${response.statusCode}'),
+94.             backgroundColor: Colors.red,
+95.           ),
+96.         );
+97.         return null;
+98.       }
+99.     } catch (e) {
+100.       ScaffoldMessenger.of(context).showSnackBar(
+101.         SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+102.       );
+103.       return null;
+104.     }
+105.   }
+106.
+
+B.3 Головне меню адмін палені
+
+GitHub репозиторій: https://github.com/NureKryvoshapkoSerhii/apz-pzpi-22-8-kryvoshapko-serhii/blob/main/Lab3/pzpi-22-8-kryvoshapko-serhii-lab3/lib/screens/AdminMainScreen.dart
+
+
+1. import 'dart:async';
+2. import 'package:flutter/material.dart';
+3. import 'package:firebase_auth/firebase_auth.dart';
+4. import 'package:nutri_track_web_admin/screens/auth_screen.dart';
+5. import 'package:nutri_track_web_admin/services.dart';
+6. import 'package:nutri_track_web_admin/widgets.dart';
+7. 
+8. const Color primaryColor = Color(0xFF2F4F4F);
+9. const Color secondaryColor = Color(0xFF64A79B);
+10. const Color accentColor = Colors.blueAccent;
+11. const Color textColorLight = Colors.white;
+12. 
+13. class AdminMainScreen extends StatefulWidget {
+14.   const AdminMainScreen({Key? key}) : super(key: key);
+15. 
+16.   @override
+17.   State<AdminMainScreen> createState() => _AdminMainScreenState();
+18. }
+19. 
+20. class _AdminMainScreenState extends State<AdminMainScreen>
+21.     with SingleTickerProviderStateMixin {
+22.   late TabController _tabController;
+23.   List<dynamic> consultants = [];
+24.   List<dynamic> users = [];
+25.   List<dynamic> filteredConsultants = [];
+26.   List<dynamic> filteredUsers = [];
+27.   bool isLoadingConsultants = true;
+28.   bool isLoadingUsers = true;
+29.   bool isCreatingBackup = false;
+30.   final TextEditingController _searchController = TextEditingController();
+31.   final AdminApiService _apiService = AdminApiService();
+32. 
+33.   @override
+34.   void initState() {
+35.     super.initState();
+36.     _tabController = TabController(length: 2, vsync: this);
+37.     fetchConsultants();
+38.     fetchUsers();
+39.     _searchController.addListener(_filterLists);
+40.   }
+41. 
+42.   @override
+43.   void dispose() {
+44.     _tabController.dispose();
+45.     _searchController.dispose();
+46.     super.dispose();
+47.   }
+48. 
+49.   void _filterLists() {
+50.     final query = _searchController.text.toLowerCase();
+51.     setState(() {
+52.       filteredConsultants =
+53.           consultants
+54.               .where(
+55.                 (consultant) =>
+56.                     consultant['nickname']?.toLowerCase()?.contains(query) ??
+57.                     false,
+58.               )
+59.               .toList();
+60.       filteredUsers =
+61.           users
+62.               .where(
+63.                 (user) =>
+64.                     user['nickname']?.toLowerCase()?.contains(query) ?? false,
+65.               )
+66.               .toList();
+67.     });
+68.   }
+69. 
+70.   Future<void> fetchConsultants() async {
+71.     setState(() {
+72.       isLoadingConsultants = true;
+73.     });
+74.     final data = await _apiService.fetchConsultants(context);
+75.     setState(() {
+76.       consultants = data.map((item) => _castToMap(item)).toList();
+77.       filteredConsultants = List.from(consultants); // Створюємо копію
+78.       isLoadingConsultants = false;
+79.     });
+80.   }
+81. 
+82.   Future<void> fetchUsers() async {
+83.     setState(() {
+84.       isLoadingUsers = true;
+85.     });
+86.     final data = await _apiService.fetchUsers(context);
+87.     setState(() {
+88.       users = data.map((item) => _castToMap(item)).toList();
+89.       filteredUsers = List.from(users); // Створюємо копію
+90.       isLoadingUsers = false;
+91.     });
+92.   }
+93. 
+94.   void showStatisticsDialog() async {
+95.     setState(() {
+96.       isLoadingUsers = true;
+97.     });
+98. 
+99.     final stats = await _apiService.fetchStatistics(context);
+100. 
+101.     setState(() {
+102.       isLoadingUsers = false;
+103.     });
+104. 
+105.     AdminWidgets.showStatisticsDialog(
+106.       context: context,
+107.       stats: stats,
+108.       isMounted: mounted,
+109.     );
+110.   }
+111. 
+112.   Map<String, dynamic> _castToMap(dynamic item) {
+113.     if (item is Map) {
+114.       return item.map((key, value) => MapEntry(key.toString(), value));
+115.     }
+116.     return {};
+117.   }
+118. 
+119.   @override
+120.   Widget build(BuildContext context) {
+121.     final isWideScreen = MediaQuery.of(context).size.width > 600;
+122. 
+123.     return Scaffold(
+124.       backgroundColor: secondaryColor.withOpacity(0.3),
+125.       appBar: AppBar(
+126.         title: Text(
+127.           'NutriTrack Admin Panel',
+128.           style: TextStyle(fontWeight: FontWeight.w600, color: textColorLight),
+129.         ),
+130.         backgroundColor: primaryColor,
+131.         elevation: 2,
+132.         actions: [
+133.           IconButton(
+134.             icon: Icon(Icons.bar_chart, color: textColorLight),
+135.             tooltip: 'View Statistics',
+136.             onPressed: showStatisticsDialog,
+137.           ),
+138.           IconButton(
+139.             icon:
+140.                 isCreatingBackup
+141.                     ? SizedBox(
+142.                       width: 24,
+143.                       height: 24,
+144.                       child: CircularProgressIndicator(
+145.                         color: textColorLight,
+146.                         strokeWidth: 2,
+147.                       ),
+148.                     )
+149.                     : Icon(Icons.backup, color: textColorLight),
+150.             tooltip: 'Create Database Backup',
+151.             onPressed:
+152.                 isCreatingBackup
+153.                     ? null
+154.                     : () async {
+155.                       final confirmed =
+156.                           await AdminWidgets.showBackupConfirmationDialog(
+157.                             context,
+158.                           );
+159.                       if (confirmed) {
+160.                         setState(() {
+161.                           isCreatingBackup = true;
+162.                         });
+163.                         final success = await _apiService.createDatabaseBackup(
+164.                           context,
+165.                         );
+166.                         setState(() {
+167.                           isCreatingBackup = false;
+168.                         });
+169.                       }
+170.                     },
+171.           ),
