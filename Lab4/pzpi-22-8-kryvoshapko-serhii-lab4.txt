@@ -1,0 +1,588 @@
+МІНІСТЕРСТВО ОСВІТИ І НАУКИ УКРАЇНИ
+ХАРКІВСЬКИЙ НАЦІОНАЛЬНИЙ УНІВЕРСИТЕТ РАДІОЕЛЕКТРОНІКИ
+
+Кафедра «Програмної інженерії»
+
+
+
+ЗВІТ
+З лабораторної роботи № 4
+з дисципліни
+«Архітектура програмного забезпечення» 
+на тему «Розробка програмної архітектури та створення і відлагодження програмного коду програмного застосунку мобільного пристрою для програмної системи.»
+
+
+
+Виконав
+ст. гр. ПЗПІ-22-8
+Кривошапко Сергій	Перевірив
+ст. викладач каф. ПІ
+Сокорчук І. П.
+
+
+
+
+
+
+
+
+Харків 2025
+1 ІСТОРІЯ ЗМІН
+
+У цьому розділі представлено історію внесених змін до звіту, що наведено у табл. 1.
+№	Дата	Версія звіту	Опис змін та виправлень
+1	29.05.2025	0.1	Створено розділ «Завдання»
+2	29.05.2025	0.1	Створено розділ «Опис Виконаної роботи»
+3	29.05.2025	0.1	Створено розділ «Висновки»
+
+ 
+2 ЗАВДАННЯ
+
+
+Мета лабораторної роботи — створення клієнтської частини мобільного додатку NutriTrack для однієї з актуальних мобільних платформ, з реалізацією ключового функціоналу для адміністрування системи.
+У межах цієї реалізації передбачається створення мобільного інтерфейсу для клієнта та консультанта, який забезпечує зручний доступ до функціоналу системи NutriTrack безпосередньо зі смартфона. Інтерфейс орієнтований на щоденне використання та надає всі необхідні засоби для контролю раціону, активності й взаємодії з фахівцем.
+Основні можливості мобільного застосунку для користувача:
+-	реєстрація та авторизація через Firebase Auth;
+-	створення та оновлення персональної мети (схуднення, підтримка, набір ваги);
+-	введення фізичних параметрів: вага, ріст, вік, активність;
+-	додавання прийомів їжі з розрахунком калорій і БЖВ;
+-	перегляд особистої статистики, графіків прогресу та динаміки ваги;
+-	отримання нотаток та рекомендацій від консультанта.
+Основні можливості мобільного застосунку для консультанта:
+-	авторизація у системі з доступом до панелі консультанта;
+-	перегляд списку своїх клієнтів та їхніх профілів;
+-	аналіз динаміки цілей, ваги, активності та харчування кожного користувача;
+-	додавання текстових рекомендацій та нотаток до цілей клієнта.
+Реалізований функціонал дозволяє обом сторонам — і користувачу, і консультанту — ефективно комунікувати та спільно досягати поставлених цілей у сфері здоров’я та фітнесу. Функціонал реалізовується з урахуванням обмеженого розміру екранів та мобільної навігації, забезпечуючи простоту та ефективність адміністрування в мобільному середовищі.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3 ОПИС ВИКОНАНОЇ РОБОТИ
+
+
+3.1 Реєстрація та авторизація користувачів і консультантів
+Модуль автентифікації реалізовано з використанням Firebase Authentication. Після вибору ролі (користувач або консультант), система пропонує пройти автентифікацію через Google. У разі першого входу відкривається відповідна форма реєстрації — для користувача це анкета з особистими даними (ім’я, вага, ріст, рік народження, стать), а для консультанта — профіль спеціаліста (ім’я, досвід, опис, спеціалізація).
+
+3.2 Створення та редагування персональних цілей (для користувача)
+Після реєстрації користувач переходить до створення своєї першої цілі: визначає бажану вагу, тип мети (підтримка, набір або схуднення), тривалість у тижнях. На основі введених даних система автоматично розраховує щоденну норму калорій, білків, жирів і вуглеводів. Надалі користувач може редагувати або оновлювати свої цілі через спеціальний екран.
+
+3.3 Додавання та перегляд прийомів їжі
+Користувач має можливість фіксувати спожиті продукти в рамках сніданку, обіду, вечері або перекусу. Додаток дозволяє:
+-	шукати продукти за назвою;
+-	переглядати інформацію про калорійність і БЖВ;
+-	вказувати кількість у грамах;
+-	автоматично підраховувати добову норму.
+Усі дані записуються до бази й доступні для перегляду у щоденній статистиці.
+
+3.4 Пошук консультантів (для користувача)
+Користувач може обрати консультанта для подальшого супроводу. Для цього реалізовано:
+-	екран пошуку консультантів за нікнеймом або спеціалізацією;
+-	перегляд детальної інформації про консультанта (ім’я, досвід, профіль, кількість клієнтів);
+-	можливість надіслати запит на співпрацю.
+Після підтвердження консультант матиме доступ до прогресу користувача.
+
+3.5 Перегляд клієнтів (для консультанта)
+У консультанта є власна панель з переліком підключених клієнтів. Він може:
+-	переглядати дані профілю користувача;
+-	переглядати його щоденну активність, харчування та виконання цілей;
+-	залишати нотатки, поради або запити на коригування цілей.
+
+3.6 Пошук користувачів (для консультанта)
+Реалізовано модуль пошуку клієнтів за нікнеймом. Це зручно для швидкого доступу до потрібного профілю у випадку великої кількості клієнтів.
+
+3.7 Візуалізація статистики
+Для користувачі реалізовано інтерфейс діаграм:
+-	щоденне споживання калорій;
+-	виконання БЖВ;
+-	активність за днями.
+Діаграми адаптивні, побудовані в реальному часі на основі даних із бази.
+
+
+
+
+
+
+4	ВИСНОВКИ
+
+
+У результаті виконаної роботи над мобільним застосунком NutriTrack було успішно реалізовано функціональну систему для контролю харчування, активності та взаємодії між користувачем і консультантом. Реалізовано модулі реєстрації та авторизації з використанням Firebase Authentication, які забезпечують надійний доступ до персоналізованого функціоналу обох ролей — користувача та фахівця.
+Інтерфейс застосунку розроблено з використанням Jetpack Compose, що дозволило створити адаптивний, сучасний і зручний дизайн, придатний для щоденного використання. Користувачі можуть створювати персональні цілі, додавати прийоми їжі, переглядати графіки прогресу, а також отримувати індивідуальні поради від консультантів.
+Консультанти, у свою чергу, мають доступ до профілів клієнтів, історії їх активності, цілей і можуть залишати нотатки та рекомендації. Реалізовано пошук за нікнеймом, динамічну фільтрацію клієнтів, а також перегляд зведеної статистики користувача.
+Уся клієнт-серверна взаємодія побудована на базі ASP.NET Core Web API з обробкою через Entity Framework і SQL Server, що забезпечує надійне зберігання та обробку даних. Медіа-дані зберігаються у Firebase Storage.
+Проєкт реалізовано з урахуванням принципів безпеки (використання токенів, захищене API-з’єднання) та зосередженням на зручності користувача.
+Усі основні модулі пройшли тестування на реальних сценаріях, що підтверджує стабільність системи. Додаток масштабований і придатний до розширення, що забезпечується чіткою архітектурною структур
+ДОДАТОК А
+
+Посилання на відеозапис доповіді та текст хронологічного опису
+
+Відеозапис доповіді на YouTube: https://youtu.be/mYDcSpmRb54
+
+00:00 Вступ 
+00:21 Реєстрація користувача 
+01:23 Демонстрація основного функціонала для користувача
+04:54 Зміна локалізації додатку
+05:19 Реєстрація нового консультанта
+06:24 Демонстрація основного функціонала для консультанта
+07:10 Створення зав’язків користувача та консультанта 
+
+ 
+ДОДАТОК Б
+Графічні матеріали
+
+
+Рисунок Б.1 – UML-діаграма прецедентів
+
+ 
+Рисунок Б.2 — UML-діаграма компонентів
+
+ 
+Рисунок Б.3 – UML-діаграма станів
+ 
+Рисунок Б.4 – UML діаграма діяльності
+ 
+ДОДАТОК В
+Програмний код
+
+В.1 Функції авторизації та реєстрації користувача через гугл 
+
+GitHub репозиторій: https://github.com/NureKryvoshapkoSerhii/apz-pzpi-22-8-kryvoshapko-serhii/blob/main/Lab4/pzpi-22-8-kryvoshapko-serhii-lab4/app/src/main/java/com/example/nutritrack/data/auth/GoogleAuth.kt
+
+1. object GoogleAuth {
+2.     private lateinit var googleSignInClient: GoogleSignInClient
+3.     private lateinit var appContext: Context
+4.     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+5. 
+6.     fun initialize(context: Context) {
+7.         appContext = context.applicationContext
+8.         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+9.             .requestIdToken("236833381634-jru8akdea0h7mkip711vs7n40e5u6a1e.apps.googleusercontent.com")
+10.             .requestEmail()
+11.             .build()
+12.         googleSignInClient = GoogleSignIn.getClient(context, gso)
+13.     }
+14. 
+15.     fun signIn(launcher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>) {
+16.         googleSignInClient.signOut().addOnCompleteListener {
+17.             val pendingIntent: PendingIntent = googleSignInClient.signInIntent
+18.                 .let { intent ->
+19.                     PendingIntent.getActivity(
+20.                         appContext,
+21.                         0,
+22.                         intent,
+23.                         PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+24.                     )
+25.                 }
+26. 
+27.             val intentSender: IntentSender = pendingIntent.intentSender
+28.             val intentSenderRequest = IntentSenderRequest.Builder(intentSender).build()
+29.             launcher.launch(intentSenderRequest)
+30.         }
+31.     }
+32. 
+33.     suspend fun handleSignInResult(data: Intent?): String {
+34.         return suspendCancellableCoroutine { continuation ->
+35.             try {
+36.                 val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+37.                 val account = task.getResult(ApiException::class.java)
+38.                 val googleIdToken = account.idToken
+39. 
+40.                 val credential = GoogleAuthProvider.getCredential(googleIdToken, null)
+41.                 auth.signInWithCredential(credential)
+42.                     .addOnCompleteListener { authTask ->
+43.                         if (authTask.isSuccessful) {
+44.                             auth.currentUser?.getIdToken(true)?.addOnCompleteListener { tokenTask ->
+45.                                 if (tokenTask.isSuccessful) {
+46.                                     val firebaseIdToken = tokenTask.result?.token
+47.                                     if (firebaseIdToken != null) {
+48.                                         continuation.resume(firebaseIdToken)
+49.                                     } else {
+50.                                         continuation.resumeWithException(Exception("Firebase ID token is null"))
+51.                                     }
+52.                                 } else {
+53.                                     continuation.resumeWithException(
+54.                                         tokenTask.exception
+55.                                             ?: Exception("Failed to get Firebase ID token")
+56.                                     )
+57.                                 }
+58.                             }
+59.                         } else {
+60.                             continuation.resumeWithException(
+61.                                 authTask.exception ?: Exception("Firebase Auth failed")
+62.                             )
+63.                         }
+64.                     }
+65.             } catch (e: ApiException) {
+66.                 continuation.resumeWithException(e)
+67.             }
+68.         }
+69.     }
+70. }
+
+
+В.2 Методи для доступа до API
+
+GitHub репозиторій: https://github.com/NureKryvoshapkoSerhii/apz-pzpi-22-8-kryvoshapko-serhii/blob/main/Lab4/pzpi-22-8-kryvoshapko-serhii-lab4/app/src/main/java/com/example/nutritrack/data/api/NutriTrackApiService.kt
+
+1. interface ApiServiceInterface {
+2.     @POST("api/Auth/login/consultant")
+3.     suspend fun loginConsultant(@Body request: LoginRequest): Response<Void>
+4. 
+5.     @POST("api/Auth/register/consultant")
+6.     suspend fun registerConsultant(@Body data: ConsultantRegistrationData): Response<Void>
+7. 
+8.     @POST("api/Auth/login/user")
+9.     suspend fun loginUser(@Body request: LoginRequest): Response<Void>
+10. bject ApiService {
+11.     private val retrofit: Retrofit by lazy {
+12.         val logging = HttpLoggingInterceptor().apply {
+13.             level = HttpLoggingInterceptor.Level.BODY
+14.         }
+15.         val client = OkHttpClient.Builder()
+16.             .addInterceptor(logging)
+17.             .build()
+18. 
+19.         Retrofit.Builder()
+20.             .baseUrl("http://192.168.0.183:5182")
+21.             .client(client)
+22.             .addConverterFactory(GsonConverterFactory.create())
+23.             .build()
+24.     }
+25. 
+26.     private val apiService: ApiServiceInterface by lazy {
+27.         retrofit.create(ApiServiceInterface::class.java)
+28.     }
+29. 
+30.     suspend fun checkConsultantExists(idToken: String): Boolean {
+31.         return withContext(Dispatchers.IO) {
+32.             try {
+33.                 val response = apiService.loginConsultant(LoginRequest(idToken))
+34.                 response.isSuccessful
+35.             } catch (e: Exception) {
+36.                 Log.e("ApiService", "Failed to check consultant: $e")
+37.                 false
+38.             }
+39.         }
+40.     }
+41. 
+42.     suspend fun registerConsultant(data: ConsultantRegistrationData): Boolean {
+43.         return withContext(Dispatchers.IO) {
+44.             try {
+45.                 val response = apiService.registerConsultant(data)
+46.                 response.isSuccessful
+47.             } catch (e: Exception) {
+48.                 Log.e("ApiService", "Failed to register consultant: $e")
+49.                 false
+50.             }
+51.         }
+52.     }
+53. 
+54.     suspend fun checkUserExists(idToken: String): Boolean {
+55.         return withContext(Dispatchers.IO) {
+56.             try {
+57.                 val response = apiService.loginUser(LoginRequest(idToken))
+58.                 response.isSuccessful
+59.             } catch (e: Exception) {
+60.                 Log.e("ApiService", "Failed to check user: $e")
+61.                 false
+62.             }
+63.         }
+64.     }
+65. 
+66.     suspend fun registerUser(data: UserRegistrationData): Boolean {
+67.         return withContext(Dispatchers.IO) {
+68.             try {
+69.                 val response = apiService.registerUser(data)
+70.                 response.isSuccessful
+71.             } catch (e: Exception) {
+72.                 Log.e("ApiService", "Failed to register user: $e")
+73.                 false
+74.             }
+75.         }
+76.     }
+77. 
+78.     suspend fun createUserGoal(data: UserGoalData): Boolean {
+79.         return withContext(Dispatchers.IO) {
+80.             try {
+81.                 val response = apiService.createUserGoal(data)
+82.                 response.isSuccessful
+83.             } catch (e: Exception) {
+84.                 Log.e("ApiService", "Failed to create user goal: $e")
+85.                 false
+86.             }
+87.         }
+88.     }
+89.
+
+
+
+B.3 Головне меню користувача
+
+GitHub репозиторій: https://github.com/NureKryvoshapkoSerhii/apz-pzpi-22-8-kryvoshapko-serhii/blob/main/Lab4/pzpi-22-8-kryvoshapko-serhii-lab4/app/src/main/java/com/example/nutritrack/screens/user/UserMainScreen.kt
+
+1. @RequiresApi(Build.VERSION_CODES.O)
+2. @OptIn(ExperimentalMaterial3Api::class)
+3. @Composable
+4. fun UserMainScreen(
+5.     onLogoutClick: () -> Unit,
+6.     onProfileClick: () -> Unit,
+7.     onAddFoodClick: (String) -> Unit,
+8.     onViewMealDetails: (String, String) -> Unit,
+9.     onCalendarClick: () -> Unit,
+10.     onConsultantsClick: () -> Unit,
+11. ) {
+12.     var goalData by remember { mutableStateOf<GoalResponse?>(null) }
+13.     var mealEntries by remember { mutableStateOf<List<MealEntry>>(emptyList()) }
+14.     var isLoading by remember { mutableStateOf(true) }
+15.     var errorMessage by remember { mutableStateOf<String?>(null) }
+16.     var streak by remember { mutableStateOf(0) }
+17.     var showLogoutDialog by remember { mutableStateOf(false) }
+18. 
+19.     val caloriesAnimationProgress = remember { Animatable(0f) }
+20. 
+21.     val scope = rememberCoroutineScope()
+22.     val context = LocalContext.current
+23.     val sharedPreferences = context.getSharedPreferences("NutriTrackPrefs", Context.MODE_PRIVATE)
+24.     val currentDate = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
+25. 
+26.     fun saveLastLoginDate(date: String) {
+27.         sharedPreferences.edit().putString("lastLoginDate", date).apply()
+28.     }
+29. 
+30.     fun getLastLoginDate(): String? {
+31.         return sharedPreferences.getString("lastLoginDate", null)
+32.     }
+33. 
+34.     fun saveStreak(value: Int) {
+35.         sharedPreferences.edit().putInt("currentStreak", value).apply()
+36.     }
+37. 
+38.     fun getStreak(): Int {
+39.         return sharedPreferences.getInt("currentStreak", 0)
+40.     }
+41. 
+42.     LaunchedEffect(Unit) {
+43.         scope.launch {
+44.             try {
+45.                 isLoading = true
+46.                 errorMessage = null
+47. 
+48.                 val idToken = FirebaseAuthHelper.getIdToken()
+49.                 if (idToken == null) {
+50.                     errorMessage = context.getString(R.string.authorization_error_idtoken_not_found)
+51.                     return@launch
+52.                 }
+53. 
+54.                 val lastLoginDateStr = getLastLoginDate()
+55.                 val currentDate = LocalDate.now()
+56.                 var currentStreak: Int
+57. 
+58.                 val streakResponse = ApiService.getMostRecentStreak(idToken)
+59. 
+60.                 if (streakResponse == null && lastLoginDateStr == null) {
+61.                     currentStreak = 1
+62.                     if (ApiService.addStreak(idToken, currentStreak)) {
+63.                         saveStreak(currentStreak)
+64.                         saveLastLoginDate(currentDate.toString())
+65.                     } else {
+66.                         errorMessage = context.getString(R.string.failed_to_create_streak)
+67.                         return@launch
+68.                     }
+69.                 } else if (streakResponse == null) {
+70.                     currentStreak = 1
+71.                     if (ApiService.addStreak(idToken, currentStreak)) {
+72.                         saveStreak(currentStreak)
+73.                         saveLastLoginDate(currentDate.toString())
+74.                     } else {
+75.                         errorMessage = context.getString(R.string.failed_to_create_streak2)
+76.                         return@launch
+77.                     }
+78.                 } else {
+79.                     currentStreak = streakResponse.current_streak
+80.                     val streakDate = LocalDate.parse(
+81.                         streakResponse.streak_date.split("T")[0],
+82.                         DateTimeFormatter.ISO_LOCAL_DATE
+83.                     )
+84.                     val lastLoginDate = lastLoginDateStr?.let {
+85.                         LocalDate.parse(it, DateTimeFormatter.ISO_LOCAL_DATE)
+86.                     } ?: streakDate
+87. 
+88.                     val daysDifference = ChronoUnit.DAYS.between(lastLoginDate, currentDate).toInt()
+89. 
+90.                     when {
+91.                         daysDifference == 0 -> {
+92.                             currentStreak = streakResponse.current_streak
+93.                             saveStreak(currentStreak)
+94.                         }
+95. 
+96.                         daysDifference == 1 -> {
+97.                             currentStreak = streakResponse.current_streak + 1
+98.                             if (ApiService.updateStreak(idToken, currentStreak, true)) {
+99.                                 saveStreak(currentStreak)
+100.                                 saveLastLoginDate(currentDate.toString())
+101.                             } else {
+102.                                 errorMessage = context.getString(R.string.failed_to_update_streak)
+103.                                 return@launch
+104.                             }
+105.                         }
+106. 
+107.                         daysDifference >= 2 -> {
+108.                             currentStreak = 0
+109.                             if (ApiService.updateStreak(idToken, currentStreak, false)) {
+110.                                 saveStreak(currentStreak)
+111.                                 saveLastLoginDate(currentDate.toString())
+112.                             } else {
+113.                                 errorMessage = context.getString(R.string.failed_to_update_streak)
+114.                                 return@launch
+115.                             }
+116.                         }
+117.                     }
+118.                 }
+119.                 streak = currentStreak
+120. 
+121.                 val goalIds = ApiService.getAllUserGoalIds(idToken)
+122.                 if (goalIds.isEmpty()) {
+123.                     errorMessage = context.getString(R.string.target_not_found)
+124.                     return@launch
+125.                 }
+126. 
+127.                 val goalId = goalIds.first().goalId
+128.                 val goal = ApiService.getSpecificGoalById(goalId)
+129.                 if (goal == null) {
+130.                     errorMessage = context.getString(R.string.unable_to_obtain_target_details)
+131.                     return@launch
+132.                 }
+133.                 goalData = goal
+134. 
+135.                 val meals = ApiService.getAllMeals(idToken)
+136.                 mealEntries = meals.filter {
+137.                     val entryDate = LocalDate.parse(
+138.                         it.entry_date.split("T")[0],
+139.                         DateTimeFormatter.ISO_LOCAL_DATE
+140.                     )
+141.                     entryDate.isEqual(LocalDate.now())
+142.                 }
+143. 
+144.                 caloriesAnimationProgress.animateTo(
+145.                     targetValue = 1f,
+146.                     animationSpec = tween(100, easing = LinearEasing)
+147.                 )
+148.             } catch (e: Exception) {
+149.                 errorMessage = "Error: ${e.message}"
+150.             } finally {
+151.                 isLoading = false
+152.             }
+153.         }
+154.     }
+155.     if (showLogoutDialog) {
+156.         AlertDialog(
+157.             onDismissRequest = { showLogoutDialog = false },
+158.             title = {
+159.                 Text(
+160.                     text = stringResource(R.string.logout_confirmation),
+161.                     color = Color.White,
+162.                     fontSize = 20.sp,
+163.                     fontWeight = FontWeight.Bold,
+164.                 )
+165.             },
+166.             text = {
+167.                 Text(
+168.                     text = stringResource(R.string.are_you_sure_you_want_to_log_out),
+169.                     color = Color.White,
+170.                     fontSize = 16.sp
+171.                 )
+172.             },
+173.             containerColor = Color(0xFF2F4F4F),
+174.             shape = RoundedCornerShape(12.dp),
+175.             confirmButton = {
+176.                 TextButton(
+177.                     onClick = {
+178.                         showLogoutDialog = false
+179.                         onLogoutClick()
+180.                     },
+181.                     colors = textButtonColors(
+182.                         contentColor = Color.White
+183.                     )
+184.                 ) {
+185.                     Text(stringResource(R.string.yes), fontSize = 16.sp)
+186.                 }
+187.             },
+188.             dismissButton = {
+189.                 TextButton(
+190.                     onClick = { showLogoutDialog = false },
+191.                     colors = textButtonColors(
+192.                         contentColor = Color.White
+193.                     )
+194.                 ) {
+195.                     Text(stringResource(R.string.no), fontSize = 16.sp)
+196.                 }
+197.             }
+198.         )
+199.     }
+200.     Scaffold(
+201.         modifier = Modifier.fillMaxSize(),
+202.         topBar = {
+203.             TopAppBar(
+204.                 title = {
+205.                     Row(
+206.                         verticalAlignment = Alignment.CenterVertically,
+207.                         horizontalArrangement = Arrangement.spacedBy(8.dp)
+208.                     ) {
+209.                         IconButton(onClick = { showLogoutDialog = true }) {
+210.                             Icon(
+211.                                 painter = painterResource(id = R.drawable.ic_logout),
+212.                                 contentDescription = "Logout",
+213.                                 modifier = Modifier.size(35.dp),
+214.                                 tint = Color.White
+215.                             )
+216.                         }
+217.                         Text(
+218.                             text = "NutriTrack",
+219.                             fontSize = 28.sp,
+220.                             fontWeight = FontWeight.Bold,
+221.                             color = Color.White
+222.                         )
+223.                     }
+224.                 },
+225.                 actions = {
+226.                     Text(
+227.                         text = streak.toString(),
+228.                         fontSize = 31.sp,
+229.                         fontWeight = FontWeight.Bold,
+230.                         color = Color.White
+231.                     )
+232.                     IconButton(onClick = { /* TODO: Action for flame icon */ }) {
+233.                         Icon(
+234.                             painter = painterResource(id = R.drawable.ic_flame),
+235.                             contentDescription = "Fire",
+236.                             modifier = Modifier.size(35.dp),
+237.                             tint = Color.White
+238.                         )
+239.                     }
+240.                     IconButton(onClick = onCalendarClick) {
+241.                         Icon(
+242.                             painter = painterResource(id = R.drawable.ic_calendar),
+243.                             contentDescription = "Calendar",
+244.                             modifier = Modifier.size(35.dp),
+245.                             tint = Color.White
+246.                         )
+247.                     }
+248.                 },
+249.                 colors = TopAppBarDefaults.topAppBarColors(
+250.                     containerColor = Color(0xFF2F4F4F)
+251.                 ),
+252.                 modifier = Modifier.height(75.dp)
+253.             )
+254.         },
