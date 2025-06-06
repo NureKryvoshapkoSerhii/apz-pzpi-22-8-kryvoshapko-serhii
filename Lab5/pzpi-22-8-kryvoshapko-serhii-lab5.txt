@@ -161,84 +161,144 @@
 
  
 Рисунок Б.6 – UML діаграма діяльності
+
+
+Рисунок Б.7 – ER-модель даних
+
  
 ДОДАТОК В
 Програмний код
 
-В.1 Функції авторизації та реєстрації користувача через гугл 
+В.1 Математична обробка прикладних даних
 
-GitHub репозиторій: https://github.com/NureKryvoshapkoSerhii/apz-pzpi-22-8-kryvoshapko-serhii/blob/main/Lab4/pzpi-22-8-kryvoshapko-serhii-lab4/app/src/main/java/com/example/nutritrack/data/auth/GoogleAuth.kt
+GitHub репозиторій: https://github.com/NureKryvoshapkoSerhii/apz-pzpi-22-8-kryvoshapko-serhii/blob/main/Lab2/pzpi-22-8-kryvoshapko-serhii-lab2/Controllers/GoalController.cs
 
-1. object GoogleAuth {
-2.     private lateinit var googleSignInClient: GoogleSignInClient
-3.     private lateinit var appContext: Context
-4.     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
-5. 
-6.     fun initialize(context: Context) {
-7.         appContext = context.applicationContext
-8.         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-9.             .requestIdToken("236833381634-jru8akdea0h7mkip711vs7n40e5u6a1e.apps.googleusercontent.com")
-10.             .requestEmail()
-11.             .build()
-12.         googleSignInClient = GoogleSignIn.getClient(context, gso)
-13.     }
-14. 
-15.     fun signIn(launcher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>) {
-16.         googleSignInClient.signOut().addOnCompleteListener {
-17.             val pendingIntent: PendingIntent = googleSignInClient.signInIntent
-18.                 .let { intent ->
-19.                     PendingIntent.getActivity(
-20.                         appContext,
-21.                         0,
-22.                         intent,
-23.                         PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-24.                     )
-25.                 }
-26. 
-27.             val intentSender: IntentSender = pendingIntent.intentSender
-28.             val intentSenderRequest = IntentSenderRequest.Builder(intentSender).build()
-29.             launcher.launch(intentSenderRequest)
-30.         }
-31.     }
-32. 
-33.     suspend fun handleSignInResult(data: Intent?): String {
-34.         return suspendCancellableCoroutine { continuation ->
-35.             try {
-36.                 val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-37.                 val account = task.getResult(ApiException::class.java)
-38.                 val googleIdToken = account.idToken
-39. 
-40.                 val credential = GoogleAuthProvider.getCredential(googleIdToken, null)
-41.                 auth.signInWithCredential(credential)
-42.                     .addOnCompleteListener { authTask ->
-43.                         if (authTask.isSuccessful) {
-44.                             auth.currentUser?.getIdToken(true)?.addOnCompleteListener { tokenTask ->
-45.                                 if (tokenTask.isSuccessful) {
-46.                                     val firebaseIdToken = tokenTask.result?.token
-47.                                     if (firebaseIdToken != null) {
-48.                                         continuation.resume(firebaseIdToken)
-49.                                     } else {
-50.                                         continuation.resumeWithException(Exception("Firebase ID token is null"))
-51.                                     }
-52.                                 } else {
-53.                                     continuation.resumeWithException(
-54.                                         tokenTask.exception
-55.                                             ?: Exception("Failed to get Firebase ID token")
-56.                                     )
-57.                                 }
-58.                             }
-59.                         } else {
-60.                             continuation.resumeWithException(
-61.                                 authTask.exception ?: Exception("Firebase Auth failed")
-62.                             )
-63.                         }
-64.                     }
-65.             } catch (e: ApiException) {
-66.                 continuation.resumeWithException(e)
+1. private (double calories, double protein, double carbs, double fats, string warning) CalculateNutrition(
+2.             double currentWeight,
+3.             double targetWeight,
+4.             int durationWeeks,
+5.             int height,
+6.             string gender,
+7.             GoalType goalType,
+8.             ActivityLevel activityLevel,
+9.             int birthYear)
+10.         {
+11.             const double CaloriesPerKg = 7700; 
+12.             string warning = null;
+13. 
+14.             // Calculate age
+15.             int currentYear = DateTime.UtcNow.Year;
+16.             int age = currentYear - birthYear;
+17. 
+18.             // Calculate BMR using Mifflin-St Jeor formula
+19.             double bmr;
+20.             if (gender.ToLower() == "male")
+21.             {
+22.                 bmr = (10 * currentWeight) + (6.25 * height) - (5 * age) + 5;
+23.             }
+24.             else
+25.             {
+26.                 bmr = (10 * currentWeight) + (6.25 * height) - (5 * age) - 161;
+27.             }
+28. 
+29.             // Calculate TDEE based on activity level
+30.             double tdee = bmr;
+31.             switch (activityLevel)
+32.             {
+33.                 case ActivityLevel.Sedentary:
+34.                     tdee *= 1.2;
+35.                     break;
+36.                 case ActivityLevel.Light:
+37.                     tdee *= 1.37;
+38.                     break;
+39.                 case ActivityLevel.Moderate:
+40.                     tdee *= 1.42;
+41.                     break;
+42.                 case ActivityLevel.High:
+43.                     tdee *= 1.62;
+44.                     break;
+45.             }
+46. 
+47.             // Calculate weight difference and required calorie adjustment
+48.             double weightDifference = targetWeight - currentWeight; 
+49.             double totalCaloriesNeeded = Math.Abs(weightDifference) * CaloriesPerKg; 
+50.             double weeklyCalorieAdjustment = totalCaloriesNeeded / durationWeeks; 
+51.             double dailyCalorieAdjustment = weeklyCalorieAdjustment / 7; 
+52. 
+53.             if (dailyCalorieAdjustment > 2000)
+54.             {
+55.                 warning = $"Warning: Daily calorie adjustment ({dailyCalorieAdjustment:F2} kcal) is highly unrealistic. Consider increasing duration to at least {Math.Ceiling(Math.Abs(weightDifference) / 0.5)} weeks for safer weight change.";
+56.             }
+57. 
+58.             double dailyCalories = tdee;
+59.             if (goalType == GoalType.Loss)
+60.             {
+61.                 dailyCalories -= dailyCalorieAdjustment;
+62.                 dailyCalories = Math.Max(dailyCalories, gender.ToLower() == "male" ? 1500 : 1200);
+63.             }
+64.             else if (goalType == GoalType.Gain)
+65.             {
+66.                 dailyCalories += dailyCalorieAdjustment;
 67.             }
-68.         }
-69.     }
-70. }
+68.     
+69.             double proteinPerKg;
+70.             double fatPercentage;
+71.             double carbPercentage;
+72.             switch (goalType)
+73.             {
+74.                 case GoalType.Loss:
+75.                     proteinPerKg = 1.8;
+76.                     fatPercentage = 0.20; 
+77.                     carbPercentage = 0.40; 
+78.                     break;
+79.                 case GoalType.Gain:
+80.                     proteinPerKg = 1.9; 
+81.                     fatPercentage = 0.25; 
+82.                     carbPercentage = 0.45; 
+83.                     break;
+84.                 case GoalType.Maintain:
+85.                 default:
+86.                     proteinPerKg = 1.4; 
+87.                     fatPercentage = 0.30;
+88.                     carbPercentage = 0.40; 
+89.                     break;
+90.             }
+91. 
+92.             // Adjust proteinPerKg based on weight difference and duration
+93.             double averageWeight = (currentWeight + targetWeight) / 2;
+94.             if (Math.Abs(weightDifference) > 20)
+95.             {
+96.                 proteinPerKg += 0.3; 
+97.             }
+98.             if (durationWeeks < 10)
+99.             {
+100.                 proteinPerKg += 0.1; 
+101.             }
+102. 
+103.             // Calculate protein based on average weight
+104.             double protein = averageWeight * proteinPerKg;
+105. 
+106.             // Warn if protein intake is extremely high
+107.             if (protein / averageWeight > 3)
+108.             {
+109.                 warning = (string.IsNullOrEmpty(warning) ? "" : warning + " ") +
+110.                          $"Warning: Protein intake ({protein:F2} g, {protein / averageWeight:F2} g/kg) is extremely high and may not be sustainable.";
+111.             }
+112. 
+113.             // Calculate fats and carbs
+114.             double fats = (dailyCalories * fatPercentage) / 9;
+115.             double proteinCalories = protein * 4;
+116.             double fatCalories = fats * 9;
+117.             double carbCalories = dailyCalories * carbPercentage;
+118.             double carbs = carbCalories / 4;
+119. 
+120.             // Ensure non-negative macronutrients
+121.             protein = Math.Max(protein, 0);
+122.             fats = Math.Max(fats, 0);
+123.             carbs = Math.Max(carbs, 0);
+124. 
+125.             return (dailyCalories, protein, carbs, fats, warning);
+126.         }
 
 
 В.2 Методи для доступа до API
